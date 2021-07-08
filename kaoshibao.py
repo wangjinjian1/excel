@@ -31,6 +31,15 @@ listtitle = ['题干（必填）', '题型（必填）', '选项A', '选项B', '
 listType = ['单选题', '多选题', '判断题']
 
 
+def modifyAnswer(file, column):
+    wb = load_workbook(file)
+    ws = wb.active
+    for row in range(2, ws.max_row + 1):
+        answer = ws.cell(row=row, column=column).value
+        ws.cell(row=row, column=column).value = dicSelect[answer]
+    wb.save(file)
+
+
 def handeleExcel(ws):
     lenlist = len(listtitle)
     for i in range(1, 1 + lenlist):
@@ -108,4 +117,5 @@ def fun3(path):
 if __name__ == '__main__':
     # fun2('安规普考_变电判断题库.xlsx')
     # fun1('安规普考_变电选择题库.xlsx')
-    fun3('抄表核算收费员网大版题库.xlsx')
+    # fun3('抄表核算收费员网大版题库.xlsx')
+    fun3('1.xlsx')
