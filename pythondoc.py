@@ -1,4 +1,5 @@
 from docx import Document
+import os
 
 dic = {
     '(1)': '(一)',
@@ -36,8 +37,9 @@ dic = {
     '（5）': '(五)',
     '（6）': '(六)',
 }
-
-doc = Document('3.docx')
+dic1 = {'一、', '二、', '三、', '四、', '五、', '六、', '七、'}
+path = '/Users/wangjinjian/Desktop/23/技能等级评价--上海公司题库--笔试/供电服务员(抄表核算收费员)-抄表核算收费员/抄表核算收费员技能笔试题库.docx'
+doc = Document(path)
 cnt = 1
 for con in doc.paragraphs:
     content = con.text
@@ -53,4 +55,12 @@ for con in doc.paragraphs:
             con.text = dic[content[0:3]] + content[3:]
         elif content[0:2] in dic.keys():
             con.text = dic[content[0:2]] + content[2:]
-doc.save('@3.docx')
+        elif content[:2] in dic1:
+            con.text = ''
+paths = path.split('/')
+lenpath = len(paths)
+fpath = '/'
+for i in range(lenpath - 1):
+    fpath = os.path.join(fpath, paths[i])
+fpath = os.path.join(fpath, '@' + paths[lenpath - 1])
+doc.save(fpath)
