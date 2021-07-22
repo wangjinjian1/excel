@@ -91,7 +91,7 @@ def fun3(path):
     newwb = Workbook()
     newws = newwb.active
     handeleExcel(newws)
-    for row in range(3, ws.max_row):
+    for row in range(3, ws.max_row + 1):
         if ws.cell(row=row, column=1).value == None:
             break
         # 题干
@@ -103,7 +103,12 @@ def fun3(path):
         # 解析
         newws.cell(row=row, column=12).value = ws.cell(row=row, column=13).value
         values = ws.cell(row=row, column=8).value
-        arrs = values.split('$;$')
+        if values.find('$;$') != -1:
+            arrs = values.split('$;$')
+        elif values.find('$ ; $') != -1:
+            arrs = values.split('$ ; $')
+        else:
+            arrs = []
         # 选项
         if len(arrs) > 2:
             for index in range(3, len(arrs) + 3):

@@ -10,7 +10,10 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-
+.docx
+.doc
+.xls
+.xlsx
 # Generated files
 .idea/**/contentModel.xml
 
