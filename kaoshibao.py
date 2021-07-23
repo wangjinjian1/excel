@@ -83,7 +83,41 @@ def fun2(path):
         newws.cell(row=row, column=4).value = '错误'
     newwb.save('@' + path)
 
-
+# 专业
+def fun33(path):
+    wb = load_workbook(path)
+    ws = wb.active
+    newwb = Workbook()
+    newws = newwb.active
+    handeleExcel(newws)
+    for row in range(5, ws.max_row + 1):
+        if ws.cell(row=row, column=1).value == None:
+            break
+        # 题干
+        newws.cell(row=row, column=1).value = ws.cell(row=row, column=4).value
+        # 答案
+        newws.cell(row=row, column=11).value = ws.cell(row=row, column=6).value
+        # 题型
+        newws.cell(row=row, column=2).value = ws.cell(row=row, column=3).value
+        # 解析
+        newws.cell(row=row, column=12).value = ws.cell(row=row, column=7).value
+        values = ws.cell(row=row, column=5).value
+        print(values)
+        if values==None:
+            arrs=[]
+        else:
+            if values.find('$;$') != -1:
+                arrs = values.split('$;$')
+            elif values.find('$ ; $') != -1:
+                arrs = values.split('$ ; $')
+        # 选项
+        if len(arrs) > 2:
+            for index in range(3, len(arrs) + 3):
+                newws.cell(row=row, column=index).value = arrs[index - 3]
+        else:
+            newws.cell(row=row, column=3).value = '正确'
+            newws.cell(row=row, column=4).value = '错误'
+    newwb.save('@' + path)
 # 专业
 def fun3(path):
     wb = load_workbook(path)
@@ -103,12 +137,13 @@ def fun3(path):
         # 解析
         newws.cell(row=row, column=12).value = ws.cell(row=row, column=13).value
         values = ws.cell(row=row, column=8).value
-        if values.find('$;$') != -1:
-            arrs = values.split('$;$')
-        elif values.find('$ ; $') != -1:
-            arrs = values.split('$ ; $')
+        if values==None:
+            arrs=[]
         else:
-            arrs = []
+            if values.find('$;$') != -1:
+                arrs = values.split('$;$')
+            elif values.find('$ ; $') != -1:
+                arrs = values.split('$ ; $')
         # 选项
         if len(arrs) > 2:
             for index in range(3, len(arrs) + 3):
@@ -123,4 +158,4 @@ if __name__ == '__main__':
     # fun2('安规普考_变电判断题库.xlsx')
     # fun1('安规普考_变电选择题库.xlsx')
     # fun3('抄表核算收费员网大版题库.xlsx')
-    fun3('1.xlsx')
+    fun33('上海公司2021年度产融协同知识竞赛试题.xlsx')
