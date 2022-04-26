@@ -5,13 +5,16 @@ from collections import defaultdict
 from openpyxl import load_workbook
 from urllib3 import disable_warnings
 
-disable_warnings()
-# 答题的token
-Token = 'DD655FBB27119241E050007F01000646'
-
+# 答题的token，必须有
+Token = ''
 # 233.txt 放题目
 # 把excel放在tiku下，记得用kaoshibao.py转化
 # initTiKu  录入题库
+
+disable_warnings()
+
+
+
 
 patternTitle = re.compile('[（）。，！,.() /《》<>、：:;；]')
 
