@@ -1,29 +1,6 @@
 from openpyxl import workbook, load_workbook, Workbook
 import random, os
 
-dicSelect = {
-    1: 'A',
-    2: 'B',
-    3: 'C',
-    4: 'D',
-    12: 'AB',
-    13: 'AC',
-    14: 'AD',
-    23: 'BC',
-    24: 'BD',
-    34: 'CD',
-    123: 'ABC',
-    124: 'ABD',
-    134: 'ACD',
-    234: 'BCD',
-    1234: 'ABCD',
-    25:'BE',
-    1345:'ACDE',
-    145:'ADE',
-    2345:'BCDE',
-    135:'ACE'
-
-}
 
 dicJudge = {
     '正确': 'A',
@@ -37,12 +14,19 @@ listtitle = ['题干（必填）', '题型（必填）', '选项A', '选项B', '
 listType = ['单选题', '多选题', '判断题']
 
 
+
+def numToChar(s):
+    res=''
+    for i in str(s):
+        res+=chr(int(i)+64)
+    return res
+
 def modifyAnswer(file, column):
     wb = load_workbook(file)
     ws = wb.active
     for row in range(2, ws.max_row + 1):
         answer = ws.cell(row=row, column=column).value
-        ws.cell(row=row, column=column).value = dicSelect[answer]
+        ws.cell(row=row, column=column).value = numToChar(answer)
     wb.save(file)
 
 
@@ -63,7 +47,7 @@ def fun1(path):
     for row in range(2, ws.max_row + 1):
         newws.cell(row=row, column=1).value = ws.cell(row=row, column=5).value
         answer = ws.cell(row=row, column=11).value
-        newws.cell(row=row, column=11).value = dicSelect[answer]
+        newws.cell(row=row, column=11).value = numToChar(answer)
         if answer <= 4:
             newws.cell(row=row, column=2).value = listType[0]
         else:
@@ -228,6 +212,7 @@ def RBFight(path, ab=True):
 
 
 if __name__ == '__main__':
+   # print( NumToChar('123'))
     # fun2('配电判断题.xlsx')
     fun1('配电选择题.xlsx')
     # fun3('抄表核算收费员网大版题库.xlsx')
