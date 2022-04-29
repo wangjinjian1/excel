@@ -105,6 +105,8 @@ def auto1(examId, token, usetime=random.randint(2000, 2500), check=False):
     ans = []
     ansre = []
     ansre1 = []
+    if check:
+        qq1=handleques(qq)
     for index, q in enumerate(qq):
         ans.append({
             "SerialNumber": q['SERIAL_NUMBER'],
@@ -113,7 +115,7 @@ def auto1(examId, token, usetime=random.randint(2000, 2500), check=False):
         ansre.append(q['RIGHT_ANSWERS'])
     if check:
         tiku = getTiku()
-        for v in qq.values():
+        for v in qq1.values():
             if v in tiku:
                 ansre1.append(tiku[v]['answer'])
     data = {'json': json.dumps(ans, separators=(',', ':')),
@@ -207,6 +209,6 @@ if __name__ == '__main__':
     # 考试
     # kaoshi('tiku')
     # 模拟
-    initTiKu(excelpath='tiku')
-    url = ''
+    # initTiKu(excelpath='tiku1')
+    url = 'https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetMockQuestionList2.ashx?t=1651214677113&Token=DDC4316229E0F194E050007F01007627&questionQty=195&SpecialType=353&libraryId=523&libraryType=&Type=Mock&examId=123565'
     automoni(url)
