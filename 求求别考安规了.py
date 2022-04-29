@@ -210,5 +210,5 @@ if __name__ == '__main__':
     # kaoshi('tiku')
     # 模拟
     # initTiKu(excelpath='tiku1')
-    url = 'https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetMockQuestionList2.ashx?t=1651214677113&Token=DDC4316229E0F194E050007F01007627&questionQty=195&SpecialType=353&libraryId=523&libraryType=&Type=Mock&examId=123565'
+    url=''
     automoni(url)
