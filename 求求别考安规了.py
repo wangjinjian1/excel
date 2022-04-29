@@ -8,6 +8,7 @@ disable_warnings()
 
 patternTitle = re.compile('[（）。，！,.() /《》<>、：:;；]')
 
+
 def getKSTM(examId='', token='', filepath='233.txt'):
     qq = defaultdict()
     if examId == '':
@@ -88,6 +89,14 @@ def printAnswer(examId=''):
     tiku = getTiku()
     for k, v in qq.items():
         print(k, tiku[v]['answer'], tiku[v]['content'])
+
+
+# 如果考试返回的题目有答案
+def kaoshi1(filepath='233.txt'):
+    with open(filepath, 'r', encoding='utf-8') as f:
+        questions = json.load(f)['data']['question']
+    for qq in questions:
+        print(qq['SerialNumber'],qq['RIGHT_ANSWERS'])
 
 
 # 进阶模拟答题
@@ -185,8 +194,10 @@ def automoni(a):
     token = query['Token'][0]
     examId = query['examId'][0]
     print(token, examId)
-    a1,a2=auto1(examId=examId, token=token,check=True)
-    if a1==a2:
+    a1, a2 = auto1(examId=examId, token=token, check=True)
+    print(a1)
+    print(a2)
+    if a1 == a2:
         print('1')
     else:
         print('2')
@@ -196,5 +207,6 @@ if __name__ == '__main__':
     # 考试
     # kaoshi('tiku')
     # 模拟
+    initTiKu(excelpath='tiku')
     url = ''
     automoni(url)
