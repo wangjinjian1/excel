@@ -6,15 +6,13 @@ from openpyxl import load_workbook
 from urllib3 import disable_warnings
 
 # 答题的token，必须有
-Token = ''
+
+Token = 'DDB7BD7CAEB3FD7AE050007F01002593'
 # 233.txt 放题目
 # 把excel放在tiku下，记得用kaoshibao.py转化
 # initTiKu  录入题库
 
 disable_warnings()
-
-
-
 
 patternTitle = re.compile('[（）。，！,.() /《》<>、：:;；]')
 
@@ -29,7 +27,8 @@ def getKSTM(examId='', filepath='233.txt'):
     else:
         questions = getTikuById(examId)
     for q in questions:
-        qq[int(q['SERIAL_NUMBER'])] = patternTitle.sub('', q['QUESTION_CONTENT']).strip().replace('　　', '')
+        qq[int(q['SERIAL_NUMBER'])] = patternTitle.sub('', q['QUESTION_CONTENT']).strip().replace('　　', '').replace('　',
+                                                                                                                    '')
     return qq
 
 
@@ -41,13 +40,16 @@ def charToIndex(s):
 def initTiKu(excelpath='tiku'):
     tiku = defaultdict(dict)
     for excel in os.listdir(excelpath):
+        if not excel.endswith('xlsx'):
+            continue
+        print(os.path.join(excelpath, excel))
         wb = load_workbook(os.path.join(excelpath, excel))
         ws = wb.active
         for i in range(2, ws.max_row + 1):
 
             if ws.cell(row=i, column=1) == None or ws.cell(row=i, column=1).value == '':
                 break
-            title = patternTitle.sub('', ws.cell(row=i, column=1).value).replace('　　', '')
+            title = patternTitle.sub('', ws.cell(row=i, column=1).value).replace('　　', '').replace('　', '')
             type = ws.cell(row=i, column=2).value.strip()
             answer = ws.cell(row=i, column=11).value.strip()
             tiku[title]['answer'] = answer
@@ -82,16 +84,38 @@ def getTiku():
     return tiku
 
 
+# 考试
 def printAnswer(examId=''):
-    qq = getKSTM()
+    # qq = getKSTM(examId)
+    qq = getKSTM('')
     tiku = getTiku()
     for k, v in qq.items():
         print(k, tiku[v]['answer'], tiku[v]['content'])
 
 
+# 进阶模拟答题
+def auto1(examId, usetime=random.randint(2000, 2500)):
+    qq = getTikuById(examId)
+    ans = []
+    for q in qq:
+        ans.append({
+            "SerialNumber": q['SERIAL_NUMBER'],
+            "AnswerValue": q['RIGHT_ANSWERS']
+        })
+    data = {'json': json.dumps(ans, separators=(',', ':')),
+            'Token': Token,
+            'TableId': examId,
+            'UseTime': usetime,
+            'Type': 'Mock'}
+    res = requests.post('https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/CommitMockExamAnswer.ashx',
+                        params={'t': int(time.time() * 1000)}, data=data,
+                        verify=False)
+    print(res.text)
+
+
 # 自动答题
 # usetime  2400s-2500s
-def auto(examId,TableId='', usetime=random.randint(2400, 2500)):
+def auto(examId, TableId='', usetime=random.randint(2000, 2500)):
     ans = []
     qq = getKSTM(examId)
     tiku = getTiku()
@@ -106,7 +130,8 @@ def auto(examId,TableId='', usetime=random.randint(2400, 2500)):
                 "SerialNumber": k,
                 "AnswerValue": "A"
             })
-    data = {'json': json.dumps(ans,separators=(',',':')),
+
+    data = {'json': json.dumps(ans, separators=(',', ':')),
             'Token': Token,
             'TableId': TableId if TableId else examId,
             'UseTime': usetime,
@@ -114,7 +139,6 @@ def auto(examId,TableId='', usetime=random.randint(2400, 2500)):
     res = requests.post('https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/CommitMockExamAnswer.ashx',
                         params={'t': int(time.time() * 1000)}, data=data,
                         verify=False)
-    print(res.request.body)
     print(res.text)
 
 
@@ -133,17 +157,24 @@ def getTikuById(examId):
              'Token': Token,
              'questionQty': 195,
              'SpecialType': 353,
+             # 'SpecialType': 344,
              'libraryId': 523,
              'libraryType': '',
              'Type': 'Mock',
              'examId': examId}
     res = requests.get('https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetMockQuestionList2.ashx', params=query,
                        verify=False)
+    print(res.json())
     return res.json()['data']['question']
 
 
+def kaoshi(excelpath='tiku1'):
+    initTiKu(excelpath)
+    printAnswer('')
+
+
 if __name__ == '__main__':
-    pass
-    # initTiKu()
-    # print(printAnswer('115362'))
-    auto(examId='115610')
+    # 考试
+    # kaoshi('tiku')
+    # 模拟
+    auto1(examId='123063')

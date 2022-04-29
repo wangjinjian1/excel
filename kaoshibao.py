@@ -213,7 +213,7 @@ def RBFight(path, ab=True):
 
 if __name__ == '__main__':
    # print( NumToChar('123'))
-    # fun2('配电判断题.xlsx')
-    fun1('配电选择题.xlsx')
+    fun2('变电判断题.xlsx')
+    fun1('变电选择题.xlsx')
     # fun3('抄表核算收费员网大版题库.xlsx')
     # fun3('/Users/wangjinjian/Downloads/用电监察员网大版题库.xlsx',True)
