@@ -1,8 +1,9 @@
 import json, re, os, requests, random, time
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, unquote
 from collections import defaultdict
 from openpyxl import load_workbook
 from urllib3 import disable_warnings
+import numpy as np
 
 disable_warnings()
 
@@ -96,7 +97,7 @@ def kaoshi1(filepath='233.txt'):
     with open(filepath, 'r', encoding='utf-8') as f:
         questions = json.load(f)['data']['question']
     for qq in questions:
-        print(qq['SerialNumber'],qq['RIGHT_ANSWERS'])
+        print(qq['SerialNumber'], qq['RIGHT_ANSWERS'])
 
 
 # 进阶模拟答题
@@ -106,7 +107,7 @@ def auto1(examId, token, usetime=random.randint(2000, 2500), check=False):
     ansre = []
     ansre1 = []
     if check:
-        qq1=handleques(qq)
+        qq1 = handleques(qq)
     for index, q in enumerate(qq):
         ans.append({
             "SerialNumber": q['SERIAL_NUMBER'],
@@ -169,6 +170,50 @@ def getJson():
     return d
 
 
+def LianXi(url, usetime=random.randint(9500, 10800), errorNum=34):
+    parastr = urlparse(url).query
+    query = parse_qs(parastr)
+    token = query['Token'][0]
+    query = {
+        't': int(time.time() * 1000),
+        'Token': token,
+        'knowledgetypeId': 344,
+        'libraryId': 523,
+        'examType': 'Order',
+        'resetFlag': -1
+    }
+    res = requests.get('https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetEduExerciseQuestion2.ashx', params=query,
+                       verify=False).json()['data']
+    randomS = set(np.random.randint(0, len(res['question']) - 1, errorNum))
+    examID = res['examId']
+    ans = []
+    for index, que in enumerate(res['question']):
+        if index in randomS:
+            ans1='A'
+        else:
+            ans1 = que['RIGHT_ANSWERS']
+        ans.append({
+            "questionId": que['QUESTION_ID'],
+            "serialNumber": index,
+            "rightAnswer":ans1 ,
+            "answerValue": ans1,
+            "knowledgetypeId": 344,
+            "libraryId": 523
+        })
+    postdata = {'Token': token,
+                'userTime': usetime,
+                'examtype': 'Order',
+                'examId': examID,
+                'answerList': json.dumps(ans, separators=(',', ':')),
+                'knowledgetypeId': 344,
+                'libraryId': 523,
+                'startDate': '2022/05/06 19:23:57'}
+    res1 = requests.post('https://aj.erow.cn:8443/AJGKAPP/api2/EDU_EXERCISE/CommitEduExerciseQuestion2.ashx',
+                         params={'t': int(time.time() * 1000)}, data=postdata,
+                         verify=False)
+    print(res1.json())
+
+
 def getTikuById(examId, token):
     query = {'t': int(time.time() * 1000),
              'Token': token,
@@ -183,6 +228,15 @@ def getTikuById(examId, token):
                        verify=False)
     print(res.json())
     return res.json()['data']['question']
+
+
+def queryStrToDict(s):
+    dic = {}
+    arrs = unquote(s).split('&')
+    for a in arrs:
+        ss = a.split('=')
+        dic[ss[0]] = ss[1]
+    return dic
 
 
 def kaoshi(excelpath='tiku1'):
@@ -209,6 +263,7 @@ if __name__ == '__main__':
     # 考试
     # kaoshi('tiku')
     # 模拟
-    # initTiKu(excelpath='tiku1')
+    # initTiKu(excelpath='tiku')
+    # automoni(url)
     url=''
-    automoni(url)
+    LianXi(url,errorNum=100)
