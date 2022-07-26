@@ -4,6 +4,7 @@ from collections import defaultdict
 from openpyxl import load_workbook
 from urllib3 import disable_warnings
 import numpy as np
+from datetime import datetime
 
 disable_warnings()
 
@@ -41,7 +42,6 @@ def initTiKu(excelpath='tiku'):
     for excel in os.listdir(excelpath):
         if not excel.endswith('xlsx'):
             continue
-        print(os.path.join(excelpath, excel))
         wb = load_workbook(os.path.join(excelpath, excel))
         ws = wb.active
         for i in range(2, ws.max_row + 1):
@@ -96,8 +96,8 @@ def printAnswer(examId=''):
 def kaoshi1(filepath='233.txt'):
     with open(filepath, 'r', encoding='utf-8') as f:
         questions = json.load(f)['data']['question']
-    for qq in questions:
-        print(qq['SerialNumber'], qq['RIGHT_ANSWERS'])
+    for index, qq in enumerate(questions):
+        print(index + 1, qq['RIGHT_ANSWERS'])
 
 
 # 进阶模拟答题
@@ -174,6 +174,7 @@ def LianXi(url, usetime=random.randint(9500, 10800), errorNum=34):
     parastr = urlparse(url).query
     query = parse_qs(parastr)
     token = query['Token'][0]
+    t=query['t'][0]
     query = {
         't': int(time.time() * 1000),
         'Token': token,
@@ -186,20 +187,22 @@ def LianXi(url, usetime=random.randint(9500, 10800), errorNum=34):
                        verify=False).json()['data']
     randomS = set(np.random.randint(0, len(res['question']) - 1, errorNum))
     examID = res['examId']
+    print(examID)
     ans = []
     for index, que in enumerate(res['question']):
         if index in randomS:
-            ans1='A'
+            ans1 = 'A'
         else:
             ans1 = que['RIGHT_ANSWERS']
         ans.append({
             "questionId": que['QUESTION_ID'],
             "serialNumber": index,
-            "rightAnswer":ans1 ,
+            "rightAnswer": ans1,
             "answerValue": ans1,
             "knowledgetypeId": 344,
             "libraryId": 523
         })
+    datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     postdata = {'Token': token,
                 'userTime': usetime,
                 'examtype': 'Order',
@@ -207,7 +210,7 @@ def LianXi(url, usetime=random.randint(9500, 10800), errorNum=34):
                 'answerList': json.dumps(ans, separators=(',', ':')),
                 'knowledgetypeId': 344,
                 'libraryId': 523,
-                'startDate': '2022/05/06 19:23:57'}
+                'startDate': datetime.fromtimestamp(int(t)/1000).strftime('%Y-%m-%d %H:%M:%S')}
     res1 = requests.post('https://aj.erow.cn:8443/AJGKAPP/api2/EDU_EXERCISE/CommitEduExerciseQuestion2.ashx',
                          params={'t': int(time.time() * 1000)}, data=postdata,
                          verify=False)
@@ -260,10 +263,17 @@ def automoni(a):
 
 
 if __name__ == '__main__':
+    pass
     # 考试
     # kaoshi('tiku')
+    # kaoshi1()
     # 模拟
     # initTiKu(excelpath='tiku')
+    # url='https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetMockQuestionList2.ashx?t=1653726729503&Token=E008871C519CFBB5E050007F010056BC&questionQty=195&SpecialType=344&libraryId=523&libraryType=&Type=Mock&examId=165330'
     # automoni(url)
-    url=''
-    LianXi(url,errorNum=100)
+    # url='https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetEduExerciseQuestion2.ashx?t=1652067601126&Token=DE8AA84E3F2CDDFCE050007F010028D4&knowledgetypeId=344&libraryId=523&examType=Order&resetFlag=-1'
+    # url='https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetEduExerciseQuestion2.ashx?t=1653546403056&Token=DFE01C5E473323A2E050007F010069C4&knowledgetypeId=344&libraryId=523&examType=Order&resetFlag=-1'
+    # url='https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetEduExerciseQuestion2.ashx?t=1653632840393&Token=DFE30AD5F4779D01E050007F01007D11&knowledgetypeId=344&libraryId=523&examType=Order&resetFlag=-1'
+    url='https://aj.erow.cn:8443/AJGKAPP/API2/EDU_EXERCISE/GetEduExerciseQuestion2.ashx?t=1653726864033&Token=E008871C519CFBB5E050007F010056BC&knowledgetypeId=344&libraryId=523&examType=Order&resetFlag=-1'
+    LianXi(url, errorNum=100)
+

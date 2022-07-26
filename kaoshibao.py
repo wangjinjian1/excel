@@ -54,7 +54,11 @@ def fun1(path):
             newws.cell(row=row, column=2).value = listType[1]
         for i in range(3, 7):
             newws.cell(row=row, column=i).value = ws.cell(row=row, column=i + 3).value
-    newwb.save('@' + path)
+        if 'E' in newws.cell(row=row, column=11).value:
+            newws.cell(row=row, column=7).value = 'E'
+    dir = os.path.dirname(path)
+    file = os.path.basename(path)
+    newwb.save(os.path.join(dir, f'@{file}'))
 
 
 # 安规判断题
@@ -71,7 +75,9 @@ def fun2(path):
         newws.cell(row=row, column=2).value = listType[2]
         newws.cell(row=row, column=3).value = '正确'
         newws.cell(row=row, column=4).value = '错误'
-    newwb.save('@' + path)
+    dir=os.path.dirname(path)
+    file=os.path.basename(path)
+    newwb.save(os.path.join(dir,f'@{file}'))
 
 
 # 专业
@@ -213,7 +219,7 @@ def RBFight(path, ab=True):
 
 if __name__ == '__main__':
    # print( NumToChar('123'))
-    fun2('变电判断题.xlsx')
-    fun1('变电选择题.xlsx')
+   #  fun2('/Users/wangjinjian/Desktop/配电安规判断题.xlsx')
+    fun1('/Users/wangjinjian/Desktop/配电安规选择题.xlsx')
     # fun3('抄表核算收费员网大版题库.xlsx')
     # fun3('/Users/wangjinjian/Downloads/用电监察员网大版题库.xlsx',True)
