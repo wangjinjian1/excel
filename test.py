@@ -151,9 +151,51 @@ def initId(save=False):
         print(ansDic)
 
 
+# Multi   Single    Fill   Judge
+def getAllQues(idDic, ansDic, urlP='https://i.kaoshiyun.com.cn/a/0c8e87/p/%s.json?time=365'):
+    transforDic = {
+        'Single': 'single',
+        'Multi': 'muti',
+        'Judge': 'judge',
+        'Fill': 'fill'
+    }
+    tikuDic = defaultdict(defaultdict)
+    count = 0
+    for values in idDic.values():
+        for value in values:
+            res = requests.get(url=urlP % value).json()
+            for t in res[0]['questions']:
+                count += 1
+                if t['qid'] not in ansDic:
+                    print(t['qid'])
+                    continue
+                tikuDic[str(count)]['q'] = t['content'].replace('\t','').strip()
+                tikuDic[str(count)]['t'] = transforDic[t['type']]
+                if t['type'] == 'Fill':
+                    tikuDic[str(count)]['a'] = ansDic[t['qid']]
+                else:
+                    ansOpt = []
+                    opts = json.loads(t['options'][0])
+                    try:
+                        for index in ansToIndex(ansDic[t['qid']]):
+                            ansOpt.append(opts[index[1]][index[0]])
+                    except Exception:
+                        t['options'][0]=t['options'][0].encode().decode('unicode_escape')
+                        t['options'].append(f'！题错！选{ansDic[t["qid"]]}')
+                        tikuDic[str(count)]['a'] = ' | '.join(t['options'])
+                        print(t['content'], ansDic[t['qid']],t['options'])
+                        continue
+                    tikuDic[str(count)]['a'] = ' | '.join(ansOpt)
+    with open('angui.json', 'w+', encoding='utf8') as f:
+        json.dump(tikuDic, f, ensure_ascii=False)
+
+
 def printAns(id='2cc774', preid='29c8ff', ansDic=None):
     f = open('ans.txt', 'w+', encoding='utf8')
-    qres = requests.get(url=f'https://i.kaoshiyun.com.cn/a/{preid}/p/{id}.json?time=855').json()[0]['questions']
+    qress = requests.get(url=f'https://i.kaoshiyun.com.cn/a/{preid}/p/{id}.json?time=855').json()
+    qres = []
+    for q in qress:
+        qres.extend(q['questions'])
     ares = requests.get(url=f'https://i.kaoshiyun.com.cn/a/{preid}/a/{id}.json?time=698').json()
     ansDic = {}
     if not ansDic:
@@ -188,4 +230,6 @@ if __name__ == '__main__':
     # getQ(idDic['1'])
     # getQues('1904be')
     # initId()
-    printAns(id='4225c2', preid='f7016b')
+    # printAns(id='071db9', preid='eba0af')
+    getAllQues(idDic, ansDic)
+    # print(json.loads('[1,2,3]')[0])
