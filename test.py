@@ -230,6 +230,6 @@ if __name__ == '__main__':
     # getQ(idDic['1'])
     # getQues('1904be')
     # initId()
-    # printAns(id='071db9', preid='eba0af')
-    getAllQues(idDic, ansDic)
+    printAns(id='7a0d0b', preid='6440e8')
+    # getAllQues(idDic, ansDic)
     # print(json.loads('[1,2,3]')[0])

@@ -220,6 +220,6 @@ def RBFight(path, ab=True):
 if __name__ == '__main__':
    # print( NumToChar('123'))
    #  fun2('/Users/wangjinjian/Desktop/配电安规判断题.xlsx')
-    fun1('/Users/wangjinjian/Desktop/配电安规选择题.xlsx')
+   #  fun1('/Users/wangjinjian/Desktop/配电安规选择题.xlsx')
     # fun3('抄表核算收费员网大版题库.xlsx')
-    # fun3('/Users/wangjinjian/Downloads/用电监察员网大版题库.xlsx',True)
+    fun3('/Users/wangjinjian/Desktop/用电监察员网大版题库4065.xlsx',True)
